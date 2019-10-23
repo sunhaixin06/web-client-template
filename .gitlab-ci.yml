@@ -1,0 +1,97 @@
+image: node:10-alpine
+
+variables:
+  DEFAULT_CACHE_KEY: "$CI_COMMIT_REF_SLUG"
+
+cache:
+  key: "$DEFAULT_CACHE_KEY"
+  paths:
+    - node_modules/
+
+stages:
+  - setup
+  - test
+  - build
+  - publish
+
+setup:
+  stage: setup
+  script:
+    - npm config set always-auth true
+    - npm config set registry https://repo.sdtdev.net/repository/npm-public/
+    - npm config set //repo.sdtdev.net/repository/npm-public/:_authToken ${NPM_AUTH_TOKEN}
+    - "[ -f yarn.lock ] && sed -i 's$r.sdt-int.com$repo.sdtdev.net$g' yarn.lock"    
+    - yarn --prefer-offline --no-progress --non-interactive --frozen-lockfile
+
+lint:
+  stage: test
+  cache:
+    key: "$DEFAULT_CACHE_KEY"
+    paths:
+      - node_modules/
+    policy: pull
+  script:
+    - yarn run lint -- --quiet
+
+intl:
+  stage: test
+  cache:
+    key: "$DEFAULT_CACHE_KEY"
+    paths:
+      - node_modules/
+    policy: pull
+  script:
+    - yarn run intl -- --test
+
+.build: &build_template
+  stage: build
+  cache:
+    key: "$DEFAULT_CACHE_KEY"
+    paths:
+      - node_modules/
+    policy: pull
+  script:
+    - yarn run build
+
+develop_build:
+  <<: *build_template
+  only:
+    - branches
+  except:
+    - master
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - lib/
+
+master_build:
+  <<: *build_template
+  only:
+    - master
+    - tags
+  artifacts:
+    expire_in: 1 month
+    paths:
+      - lib/
+
+.yarn: &yarn_publish
+  stage: publish
+  cache: {}
+  before_script:
+    - npm config set registry https://repo.sdtdev.net/repository/npm-hosted/
+    - npm config set //repo.sdtdev.net/repository/npm-hosted/:_authToken ${NPM_AUTH_TOKEN}
+    - npm config set email $GITLAB_USER_EMAIL
+
+develop_publish:
+  <<: *yarn_publish
+  only:
+    - develop
+  script:
+    - yarn publish --new-version $(node -pe "require('./package.json').version")-alpha.$CI_PIPELINE_ID --strict-semver --no-git-tag-version
+
+master_publish:
+  <<: *yarn_publish
+  only:
+    - tags
+  script:
+    - "yarn publish --new-version ${CI_COMMIT_TAG#v} --strict-semver --no-git-tag-version"

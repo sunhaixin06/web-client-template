@@ -1,37 +1,25 @@
-# web-client-template
+# 简介  
+  本项目为基于 React/Redux 以及 Ant Design 的Web前端模板。 
 
-#### 介绍
-本项目为基于 React/Redux 以及 Ant Design 的Web前端模板。基于 format.js国际化封装的shsdt脚手架工具
+# TODO  
+**在项目初始化时，应完成以下内容：**  
+1. 修改`package.json`  
+    - 项目信息：name、repository  
+    - 更新 dependencies、devDependencies 组件版本  
+1. 修改`conf/tools.conf.js`  
+    - 调整项目名称：runtime.title  
 
-#### 软件架构
-软件架构说明
+# 本地运行  
+  ~~~bash
+  npm run server    在本机 3000 端口上运行开发调试环境
+  npm run lint      使用 eslint 进行代码风格检查
+  npm run build     编译发布文件至 build 目录
+  ~~~
 
-
-#### 安装教程
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### 使用说明
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### 参与贡献
-
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
-
-
-#### 码云特技
-
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  码云官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解码云上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是码云最有价值开源项目，是码云综合评定出的优秀开源项目
-5.  码云官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  码云封面人物是一档用来展示码云会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+# 常用参数  
+**参数设置仅针对当前环境有效**  
+## tools.conf.js  
+   - dev：开发调试环境`地址`、`端口`、`静态资源目录`设置  
+   - runtime：client 入口参数设置  
+   - mock：api 入口参数设置  
+> 更多设置请参考 [web-tools](https://gitlab.sdtdev.net/rd/web/web-tools/blob/develop/README.md)
